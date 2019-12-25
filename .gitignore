@@ -93,6 +93,8 @@ ENV/
 
 # weights
 weights/
+# predicted_file
+predicted_file/
 
 #DS_Store
 .DS_Store
