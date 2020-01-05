@@ -93,11 +93,11 @@ def train():
         # dataset = VOCDetection(root=args.dataset_root,
         #                        transform=SSDAugmentation(cfg['min_dim'], MEANS))
     elif args.dataset == 'RAY':
-        cfg = ray
+        cfg = ray512
         dataset = SIXrayDetection(root=args.dataset_root,
                                   transform=SSDAugmentation(cfg['min_dim'], MEANS))
 
-    ssd_net = build_ssd('train', cfg['min_dim'], cfg['num_classes'])
+    ssd_net = build_ssd('train', cfg['min_dim'], cfg['num_classes'], ray512)
     net = ssd_net
 
     if args.cuda:

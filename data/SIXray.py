@@ -52,27 +52,7 @@ class SIXrayAnnotationTransform(object):
         Returns:
             a list containing lists of bounding boxes  [bbox coords, class name]
         """
-        # print (idx)
 
-        ###读取所有类
-        # class_path = "C:/Users/石玉峰/PycharmProjects/untitled1/package2/class.xml"
-        '''
-        class_path = SIXray_ROOT + "class.xml"
-        tree = ET.parse(class_path)
-        class_root = tree.getroot()
-        for child in class_root:
-            one_dict = {}
-            type_name = None
-            find_name = 0
-            for grandson in child:
-                if find_name == 0:
-                    find_name = 1
-                    type_name = grandson.text
-                else:
-                    one_dict[grandson.text] = 0
-            self.type_dict[type_name] = one_dict
-        #print(self.type_dict)
-        '''
         # 遍历Annotation
         # root_annotation = '/media/dsg3/datasets/Xray20190704/Annotation/'
         res = []
@@ -141,14 +121,6 @@ class SIXrayDetection(data.Dataset):
         self._annopath = osp.join(root, 'Annotation', '%s.txt')
         self._imgpath = osp.join(root, 'Image', '%s.jpg')
 
-        # self.name = 'Xray0723_bat_core_coreless'
-        # self._annopath = osp.join('%s' % self.root, 'Annotation', '%s.xml')
-        # self._annopath = osp.join('%s' % self.root, 'Anno_core_coreless_battery_sub_2000_500', '%s.txt')
-        # self._imgpath = osp.join('%s' % self.root, 'Image', '%s.jpg')
-        # self._imgpath = osp.join('%s' % self.root, 'cut_Image_core_coreless_battery_sub_2000_500', '%s.TIFF')
-        # 这尼玛还有小写的tiff？
-        # self._imgpath1 = osp.join('%s' % self.root, 'cut_Image_core_coreless_battery_sub_2000_500', '%s.tiff')
-        # self._imgpath_jpg = osp.join('%s' % self.root, 'cut_Image_core_coreless_battery_sub_2000_500', '%s.jpg')
         self.ids = list()
         if image_sets is None:
             for root, dirs, files in os.walk(self.root + 'Annotation/'):
@@ -220,6 +192,5 @@ class SIXrayDetection(data.Dataset):
             PIL img
         '''
         img_id = self.ids[index]
-        img_id = 'core_battery00000096'
         return cv2.imread(self._imgpath % img_id, cv2.IMREAD_COLOR)
 

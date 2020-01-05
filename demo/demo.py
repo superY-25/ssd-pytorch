@@ -10,6 +10,7 @@ import torch
 # import torch.nn as nn
 # import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
+from data import ray512
 import numpy as np
 import cv2
 if torch.cuda.is_available():
@@ -21,8 +22,8 @@ from ssd import build_ssd
 1、Build the architecture, specifyingsize of the input image (300), and number of object classes to score (21 for VOC dataset)
 2、Next we load pretrained weights on the VOC0712 trainval dataset
 """
-net = build_ssd('test', 300, 3)    # initialize SSD
-net.load_weights('../weights/ssd300_battery_7031.pth')
+net = build_ssd('test', ray512['min_dim'], ray512[''], ray512)    # initialize SSD
+net.load_weights('../weights/ssd512_battery1.pth')
 
 
 """
@@ -50,7 +51,7 @@ Using the torchvision package, we can create a Compose of multiple built-in tran
 For SSD, at test time we use a custom BaseTransform callable to resize our image to 300x300, 
 subtract the dataset's mean rgb values, and swap the color channels for input to SSD300
 """
-x = cv2.resize(image, (300, 300)).astype(np.float32)
+x = cv2.resize(image, (512, 512)).astype(np.float32)
 x -= (104.0, 117.0, 123.0)
 x = x.astype(np.float32)
 x = x[:, :, ::-1].copy()
@@ -78,7 +79,7 @@ detections = y.data
 scale = torch.Tensor(rgb_image.shape[1::-1]).repeat(2)
 for i in range(detections.size(1)):
     j = 0
-    while detections[0,i,j,0] >= 0.01:
+    while detections[0,i,j,0] >= 0.2:
         score = detections[0,i,j,0]
         label_name = labels[i-1]
         display_txt = '%s: %.2f'%(label_name, score)

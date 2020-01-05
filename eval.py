@@ -7,7 +7,7 @@ from __future__ import print_function
 import torch
 from torch.autograd import Variable
 import torch.backends.cudnn as cudnn
-from data import SIXray_ROOT, SIXrayAnnotationTransform, SIXrayDetection, BaseTransform
+from data import SIXray_ROOT, SIXrayAnnotationTransform, SIXrayDetection, BaseTransform, ray512
 from data import SIXray_CLASSES as labelmap
 from ssd import build_ssd
 import os
@@ -29,8 +29,8 @@ GPUID = '1'
 os.environ["CUDA_VISIBLE_DEVICES"] = GPUID
 
 parser = argparse.ArgumentParser(description='Single Shot MultiBox Detector Evaluation')
-parser.add_argument('--trained_model', default=os.path.join(home, "weights/ssd300_battery_7031.pth"),
-                    type=str, help='Trained state_dict file path to open')
+parser.add_argument('--trained_model', default=os.path.join(home, "weights/ssd512_battery1.pth"), type=str,
+                    help='Trained state_dict file path to open')
 parser.add_argument('--save_folder', default='predicted_file/', type=str,
                     help='File path to save results')
 parser.add_argument('--confidence_threshold', default=0.2, type=float,
@@ -453,17 +453,17 @@ def evaluate_detections(box_list, dataset):
 if __name__ == '__main__':
 
     num_classes = len(labelmap) + 1  # +a1 for background
-    net = build_ssd('test', 300, num_classes)  # initialize SSD
+    net = build_ssd('test', 512, num_classes, ray512)  # initialize SSD
     # load trained model if use gpu delete parameter map_location
     net.load_state_dict(torch.load(args.trained_model, map_location=torch.device('cpu')))
     net.eval()
     dataset = SIXrayDetection(args.SIXray_root, imgsetfile,
-                              BaseTransform(300, dataset_mean),
+                              BaseTransform(512, dataset_mean),
                               SIXrayAnnotationTransform())
     if args.cuda:
         net = net.cuda()
         cudnn.benchmark = True
 
     test_net(args.save_folder, net, args.cuda, dataset,
-             BaseTransform(net.size, dataset_mean), args.top_k, 300,
+             BaseTransform(net.size, dataset_mean), args.top_k, 512,
              thresh=args.confidence_threshold)
